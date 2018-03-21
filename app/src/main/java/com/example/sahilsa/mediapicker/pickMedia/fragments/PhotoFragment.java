@@ -51,6 +51,8 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     View cameraLayout;
     View addCameraButton;
 
+    boolean isPermissionGranted;
+
     public static PhotoFragment newInstance() {
         PhotoFragment photoFragment = new PhotoFragment();
         return photoFragment;
@@ -180,9 +182,9 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
             }
             if (!permissionsToRequest.isEmpty()) {
                 ActivityCompat.requestPermissions(getActivity(), permissionsToRequest.toArray(new String[permissionsToRequest.size()]), REQUEST_CAMERA_PERMISSIONS);
-            } else addCamera();
+            } else isPermissionGranted = true;
         } else {
-            addCamera();
+            isPermissionGranted = true;
         }
     }
 
@@ -190,7 +192,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length != 0) {
-            addCamera();
+            isPermissionGranted = true;
         }
     }
 
@@ -199,6 +201,9 @@ public class PhotoFragment extends Fragment implements View.OnClickListener {
         addCameraButton.setVisibility(View.GONE);
         cameraLayout.setVisibility(View.VISIBLE);
 
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         final CameraFragment cameraFragment = CameraFragment.newInstance(new Configuration.Builder()
                 .setCamera(Configuration.CAMERA_FACE_REAR).build());
         getChildFragmentManager().beginTransaction()

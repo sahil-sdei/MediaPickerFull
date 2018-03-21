@@ -172,6 +172,29 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         viewPager.setOffscreenPageLimit(2);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 1) {
+                    PhotoFragment photoFragment = (PhotoFragment) adapter.getItem(1);
+                    photoFragment.addCamera();
+                }else if (position == 2) {
+                    VideoFragment videoFragment= (VideoFragment) adapter.getItem(2);
+                    videoFragment.addCamera();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override
