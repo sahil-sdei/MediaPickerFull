@@ -13,12 +13,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.sahilsa.mediapicker.pickMedia.adapters.PagerAdapter;
-import com.example.sahilsa.mediapicker.pickMedia.fragments.PhotoFragment;
 import com.example.sahilsa.mediapicker.pickMedia.fragments.GalleryFragment;
-import com.example.sahilsa.mediapicker.pickMedia.fragments.VideoFragment;
+import com.example.sahilsa.mediapicker.pickMedia.fragments.PhotoNewFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences permissionStatus;
     private PagerAdapter adapter;
     private ViewPager viewPager;
+    boolean isVideoClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,13 +166,49 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new PagerAdapter(getSupportFragmentManager());
         adapter.addFrag(GalleryFragment.newInstance(), "Gallery");
-        adapter.addFrag(PhotoFragment.newInstance(), "Photo");
-        adapter.addFrag(VideoFragment.newInstance(), "Video");
+        adapter.addFrag(PhotoNewFragment.newInstance(), "Photo");
+//        adapter.addFrag(VideoFragment.newInstance(), "Video");
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 
         viewPager.setOffscreenPageLimit(2);
+
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 1:
+                        if (isVideoClicked) {
+                            ((PhotoNewFragment) adapter.getItem(1)).setVideoView();
+                            isVideoClicked = false;
+                        } else {
+                            ((PhotoNewFragment) adapter.getItem(1)).setPictureView();
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 1:
+                        if (isVideoClicked) {
+                            ((PhotoNewFragment) adapter.getItem(1)).setVideoView();
+                            isVideoClicked = false;
+                        } else {
+                            ((PhotoNewFragment) adapter.getItem(1)).setPictureView();
+                        }
+                        break;
+                }
+            }
+        });
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -181,18 +218,34 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 1) {
-                    PhotoFragment photoFragment = (PhotoFragment) adapter.getItem(1);
-                    photoFragment.addCamera();
-                }else if (position == 2) {
-                    VideoFragment videoFragment= (VideoFragment) adapter.getItem(2);
-                    videoFragment.addCamera();
-                }
+//                if (position == 1) {
+//                    PhotoFragment photoFragment = (PhotoFragment) adapter.getItem(1);
+//                    photoFragment.addCamera();
+//                }else if (position == 2) {
+//                    VideoFragment videoFragment= (VideoFragment) adapter.getItem(2);
+//                    videoFragment.addCamera();
+//                }
+
+//                if (position == 1) {
+//                    if (isVideoClicked) {
+//                        ((PhotoNewFragment) adapter.getItem(1)).setVideoView();
+//                        isVideoClicked = false;
+//                    } else {
+//                        ((PhotoNewFragment) adapter.getItem(1)).setPictureView();
+//                    }
+//                }
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
+            }
+        });
 
+        findViewById(R.id.textViewVideo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewPager.setCurrentItem(1, true);
+                ((PhotoNewFragment) adapter.getItem(1)).setVideoView();
             }
         });
     }
